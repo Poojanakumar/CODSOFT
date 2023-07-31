@@ -1,0 +1,27 @@
+import java.util.*;
+
+public class Main{
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Hello! How can I assist you today?");
+
+        while (true) {
+            String user = sc.nextLine().toLowerCase();
+                
+            if (user.contains("hello")) {
+                System.out.println("Chatbot:Hello there!");
+            } else if (user.contains("what are you doing?")) {
+                System.out.println("Chatbot:I'm just a chatbot, but I'm functioning well!");
+            } else if (user.contains("what is your name?")) {
+                System.out.println("Chatbot:You can call me chatbot.");
+            } else if (user.contains("bye")) {
+                System.out.println("Chatbot:Goodbye! Have a great day!");
+                break;
+            } else {
+                System.out.println("Chatbot:I'm sorry, I don't understand your query.");
+            }
+        }
+
+        sc.close();
+    }
+}
