@@ -1,0 +1,206 @@
+import java.util.Scanner;
+
+public class Main{
+
+    static final int PLAYER = 1;
+    static final int AI = -1;
+    static final int EMPTY = 0;
+
+    public static void main(String[] args) {
+        int[][] board = new int[3][3];
+        initializeBoard(board);
+
+        Scanner scanner = new Scanner(System.in);
+        int currentPlayer = PLAYER;
+
+        while (true) {
+            printBoard(board);
+
+            if (currentPlayer == PLAYER) {
+                System.out.println("Player's turn.");
+                int row, col;
+                do {
+                    System.out.print("Enter row (0-2): ");
+                    row = scanner.nextInt();
+                    System.out.print("Enter column (0-2): ");
+                    col = scanner.nextInt();
+                } while (!isValidMove(board, row, col));
+
+                board[row][col] = PLAYER;
+            } else {
+                System.out.println("AI's turn.");
+                int[] bestMove = findBestMove(board);
+                board[bestMove[0]][bestMove[1]] = AI;
+            }
+
+            if (isGameOver(board)) {
+                printBoard(board);
+                if (evaluate(board) == 0) {
+                    System.out.println("It's a draw!");
+                } else if (evaluate(board) == 1) {
+                    System.out.println("Player wins!");
+                } else {
+                    System.out.println("AI wins!");
+                }
+                break;
+            }
+
+            currentPlayer *= -1;
+        }
+
+        scanner.close();
+    }
+
+    static boolean isValidMove(int[][] board, int row, int col) {
+        return row >= 0 && row < 3 && col >= 0 && col < 3 && board[row][col] == EMPTY;
+    }
+
+    static void initializeBoard(int[][] board) {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                board[i][j] = EMPTY;
+            }
+        }
+    }
+
+    static void printBoard(int[][] board) {
+        System.out.println("-------------");
+        for (int i = 0; i < 3; i++) {
+            System.out.print("| ");
+            for (int j = 0; j < 3; j++) {
+                if (board[i][j] == PLAYER) {
+                    System.out.print("X");
+                } else if (board[i][j] == AI) {
+                    System.out.print("O");
+                } else {
+                    System.out.print(" ");
+                }
+                System.out.print(" | ");
+            }
+            System.out.println();
+            System.out.println("-------------");
+        }
+    }
+
+    static boolean isGameOver(int[][] board) {
+        return evaluate(board) != 0 || isBoardFull(board);
+    }
+
+    static boolean isBoardFull(int[][] board) {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (board[i][j] == EMPTY) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    static int evaluate(int[][] board) {
+        for (int row = 0; row < 3; row++) {
+            if (board[row][0] == board[row][1] && board[row][1] == board[row][2]) {
+                if (board[row][0] == PLAYER) {
+                    return 1;
+                } else if (board[row][0] == AI) {
+                    return -1;
+                }
+            }
+        }
+
+        for (int col = 0; col < 3; col++) {
+            if (board[0][col] == board[1][col] && board[1][col] == board[2][col]) {
+                if (board[0][col] == PLAYER) {
+                    return 1;
+                } else if (board[0][col] == AI) {
+                    return -1;
+                }
+            }
+        }
+
+        if (board[0][0] == board[1][1] && board[1][1] == board[2][2]) {
+            if (board[0][0] == PLAYER) {
+                return 1;
+            } else if (board[0][0] == AI) {
+                return -1;
+            }
+        }
+
+        if (board[0][2] == board[1][1] && board[1][1] == board[2][0]) {
+            if (board[0][2] == PLAYER) {
+                return 1;
+            } else if (board[0][2] == AI) {
+                return -1;
+            }
+        }
+
+        return 0; // No winner
+    }
+
+    static int[] findBestMove(int[][] board) {
+        int[] bestMove = new int[]{-1, -1};
+        int bestScore = Integer.MIN_VALUE;
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (board[i][j] == EMPTY) {
+                    board[i][j] = AI;
+                    int score = minimax(board, 0, false);
+                    board[i][j] = EMPTY;
+
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestMove[0] = i;
+                        bestMove[1] = j;
+                    }
+                }
+            }
+        }
+
+        return bestMove;
+    }
+
+    static int minimax(int[][] board, int depth, boolean isMaximizing) {
+        int score = evaluate(board);
+
+        if (score != 0) {
+            return score;
+        }
+
+        if (isBoardFull(board)) {
+            return 0;
+        }
+
+        if (isMaximizing) {
+            int bestScore = Integer.MIN_VALUE;
+
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    if (board[i][j] == EMPTY) {
+                        board[i][j] = AI;
+                        int currentScore = minimax(board, depth + 1, false);
+                        board[i][j] = EMPTY;
+                        bestScore = Math.max(bestScore, currentScore);
+                    }
+                }
+            }
+
+            return bestScore;
+        } else {
+            int bestScore = Integer.MAX_VALUE;
+
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    if (board[i][j] == EMPTY) {
+                        board[i][j] = PLAYER;
+                        int currentScore = minimax(board, depth + 1, true);
+                        board[i][j] = EMPTY;
+                        bestScore = Math.min(bestScore, currentScore);
+                    }
+                }
+            }
+
+            return bestScore;
+        }
+    }
+}
