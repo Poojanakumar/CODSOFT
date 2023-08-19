@@ -6,6 +6,7 @@ techniques to identify user queries and provide appropriate
 responses.
 
 create a simple chatbot with rule based response using java.
+
  output
 
  User: Hello
@@ -22,6 +23,7 @@ Chatbot: I'm sorry, I don't understand your query.
 
 User: Goodbye
 Chatbot: Goodbye! Have a great day
+
 ------------------------------------------------------------------------------------------------------------------------------------------
 Task-2 TIC-TAC-TOE AI
 
@@ -41,6 +43,7 @@ there are two ways to win
 one : AI wins match
 second : player win match
 else : Match was draw
+
 ------------------------------------------------------------------------------------------------------------------------------------------
 
 
